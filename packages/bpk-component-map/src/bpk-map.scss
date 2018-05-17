@@ -24,4 +24,30 @@
   bottom: 0;
   width: 100%;
   height: 100%;
+
+  &__marker-title {
+    background-color: $bpk-color-white;
+    padding: $bpk-spacing-sm;
+    border-radius: $bpk-spacing-xs;
+    font-size: $bpk-line-height-sm;
+    margin-left: $bpk-spacing-base;
+    white-space: nowrap;
+    position: relative;
+    top: -$bpk-spacing-xxl * 2;
+    left: -50%;
+  }
+
+  &__marker-title:after {
+    position: absolute;
+    left: 50%;
+    top: $bpk-spacing-xxl;
+    content: " ";
+    width: 0;
+    height: 0;
+    margin-left: -$bpk-spacing-sm;
+    border: solid transparent;
+    border-width: $bpk-spacing-sm;
+    border-top-color: $bpk-color-white;
+    pointer-events: none;
+  }
 }
