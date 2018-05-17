@@ -113,23 +113,25 @@ class BpkMapMarker extends Component {
         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
         position={{ lat: latitude, lng: longitude }}
       >
-        <div
-          className={classNames.join(' ')}
-          onMouseEnter={this.handleMouseEnterEvent}
-          onMouseLeave={this.handleMouseLeaveEvent}
-          onClick={() =>
-            this.handleClickEvent({
-              name,
-              size,
-              latitude,
-              longitude,
-              callback: onMarkerClick,
-              ...rest,
-            })
-          }
-          {...rest}
-        >
-          <RtlSupportedMarkerIcon className={iconClass} />
+        <div>
+          <button
+            className={classNames.join(' ')}
+            onMouseEnter={this.handleMouseEnterEvent}
+            onMouseLeave={this.handleMouseLeaveEvent}
+            onClick={() =>
+              this.handleClickEvent({
+                name,
+                size,
+                latitude,
+                longitude,
+                callback: onMarkerClick,
+                ...rest,
+              })
+            }
+            {...rest}
+          >
+            <RtlSupportedMarkerIcon className={iconClass} />
+          </button>
           {this.state.isShow && this.state.tooltip}
         </div>
       </OverlayView>
