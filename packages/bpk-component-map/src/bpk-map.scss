@@ -16,38 +16,101 @@
  * limitations under the License.
  */
 
-@import '~bpk-mixins';
+ @import '~bpk-mixins';
 
-.bpk-map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-
-  &__marker-title {
-    background-color: $bpk-color-white;
-    padding: $bpk-spacing-sm;
-    border-radius: $bpk-spacing-xs;
-    font-size: $bpk-line-height-sm;
-    margin-left: $bpk-spacing-base;
-    white-space: nowrap;
-    position: relative;
-    top: -$bpk-spacing-xxl * 2;
-    left: -50%;
-  }
-
-  &__marker-title:after {
-    position: absolute;
-    left: 50%;
-    top: $bpk-spacing-xxl;
-    content: " ";
-    width: 0;
-    height: 0;
-    margin-left: -$bpk-spacing-sm;
-    border: solid transparent;
-    border-width: $bpk-spacing-sm;
-    border-top-color: $bpk-color-white;
-    pointer-events: none;
-  }
-}
+ .bpk-map {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   width: 100%;
+   height: 100%;
+ }
+ 
+ $arrow-size: $bpk-spacing-xs;
+ 
+ .bpk-map-marker {
+   z-index: $bpk-zindex-tooltip;
+ 
+   &[x-placement=top] {
+     margin-bottom: $arrow-size;
+   }
+ 
+   &[x-placement=right] {
+     margin-left: $arrow-size;
+   }
+ 
+   &[x-placement=bottom] {
+     margin-top: $arrow-size;
+   }
+ 
+   &[x-placement=left] {
+     margin-right: $arrow-size;
+   }
+ }
+ 
+ .bpk-tooltip {
+   transition: opacity $bpk-duration-sm ease-in-out, transform $bpk-duration-sm ease-in-out;
+   outline: 0;
+   opacity: 1;
+ 
+   &--appear {
+     opacity: 0;
+ 
+     .bpk-map-marker[x-placement=top] &:not(.bpk-tooltip--appear-active) {
+       transform: translate(0, -1rem);
+       transition: none;
+     }
+ 
+     .bpk-map-marker[x-placement=right] &:not(.bpk-tooltip--appear-active) {
+       transform: translate(1rem, 0);
+       transition: none;
+     }
+ 
+     .bpk-map-marker[x-placement=bottom] &:not(.bpk-tooltip--appear-active) {
+       transform: translate(0, 1rem);
+       transition: none;
+     }
+ 
+     .bpk-map-marker[x-placement=left] &:not(.bpk-tooltip--appear-active) {
+       transform: translate(-1rem, 0);
+       transition: none;
+     }
+   }
+ 
+   &--appear-active {
+     transform: translate(0, 0);
+     transition: opacity $bpk-duration-sm ease-in-out, transform $bpk-duration-sm ease-in-out;
+     opacity: 1;
+   }
+ 
+   &__arrow {
+     @include bpk-layer-arrow($arrow-size);
+ 
+     .bpk-map-marker[x-placement=top] & {
+       @include bpk-layer-arrow-bottom($arrow-size);
+     }
+ 
+     .bpk-map-marker[x-placement=right] & {
+       @include bpk-layer-arrow-left($arrow-size);
+     }
+ 
+     .bpk-map-marker[x-placement=bottom] & {
+       @include bpk-layer-arrow-top($arrow-size);
+     }
+ 
+     .bpk-map-marker[x-placement=left] & {
+       @include bpk-layer-arrow-right($arrow-size);
+     }
+   }
+ 
+   &__inner {
+     overflow: hidden;
+ 
+     @include bpk-layer;
+ 
+     &--padded {
+       padding: $bpk-spacing-xs $bpk-spacing-sm;
+     }
+   }
+ }
+ 

@@ -17,150 +17,182 @@
  */
 /* @flow */
 
-import React, { Component } from 'react';
+import Popper from '@skyscanner/popper.js';
 import PropTypes from 'prop-types';
+import React, { Component, type Node } from 'react';
+import { Portal, cssModules } from 'bpk-react-utils';
 import { OverlayView } from 'react-google-maps';
-import { cssModules } from 'bpk-react-utils';
-import { withRtlSupport } from 'bpk-component-icon';
-import BpkLargeLocationIcon from 'bpk-component-icon/lg/location';
 
+import BpkTooltip from './BpkTooltip';
+import { ARROW_ID } from './constants';
 import STYLES from './bpk-map.scss';
 
 const getClassName = cssModules(STYLES);
 
-class BpkMapMarker extends Component {
-  constructor(props) {
+const hasTouchSupport = () =>
+  !!(
+    typeof window !== 'undefined' &&
+    ('ontouchstart' in window ||
+      (window.DocumentTouch && document instanceof window.DocumentTouch))
+  );
+
+type State = {
+  isOpen: boolean,
+};
+
+export type Props = {
+  target: Node,
+  children: Node,
+  latitude: ?number,
+  longitude: ?number,
+  placement: 'top' | 'right' | 'bottom' | 'left' | 'auto',
+  padded: boolean,
+  selected: boolean,
+  hideOnTouchDevices: boolean,
+  portalStyle: ?Object, // eslint-disable-line react/forbid-prop-types
+  portalClassName: ?string,
+  popperModifiers: ?Object,
+};
+
+class BpkMapMarker extends Component<Props, State> {
+  popper: ?Popper;
+  targetRef: ?HTMLElement;
+
+  static propTypes = {
+    target: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired,
+    placement: PropTypes.oneOf(Popper.placements),
+    padded: PropTypes.bool,
+    selected: PropTypes.bool,
+    hideOnTouchDevices: PropTypes.bool,
+    portalStyle: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    portalClassName: PropTypes.string,
+    popperModifiers: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  };
+
+  static defaultProps = {
+    placement: 'top',
+    hideOnTouchDevices: true,
+    padded: true,
+    selected: false,
+    portalStyle: null,
+    portalClassName: null,
+    popperModifiers: null,
+  };
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
-      isShow: this.props.selected,
-      tooltip: null,
+      isOpen: this.props.selected,
     };
+
+    this.popper = null;
+    this.targetRef = null;
   }
 
-  componentWillMount() {
-    const {
-      name,
-      size,
-      latitude,
-      longitude,
-      buildMarkerTooltip,
-      ...rest
-    } = this.props;
-    let tooltipElement = null;
-    if (buildMarkerTooltip) {
-      tooltipElement = buildMarkerTooltip({
-        name,
-        size,
-        latitude,
-        longitude,
-        ...rest,
-      });
-    } else {
-      tooltipElement = (
-        <div className={getClassName('bpk-map__marker-title')}>{name}</div>
-      );
-    }
-    if (tooltipElement) {
-      this.setState({ tooltip: tooltipElement });
+  componentWillUnmount() {
+    if (this.targetRef) {
+      const ref = this.targetRef;
+
+      ref.removeEventListener('mouseenter', this.openTooltip);
+      ref.removeEventListener('mouseleave', this.closeTooltip);
     }
   }
 
-  handleMouseEnterEvent = () => {
-    this.setState({ isShow: true });
+  onOpen = (tooltipElement: HTMLElement, targetElement: HTMLElement) => {
+    this.popper = new Popper(targetElement, tooltipElement, {
+      placement: this.props.placement,
+      modifiers: {
+        ...this.props.popperModifiers,
+        arrow: {
+          element: `#${ARROW_ID}`,
+        },
+      },
+    });
+
+    this.popper.scheduleUpdate();
   };
 
-  handleMouseLeaveEvent = () => {
-    this.setState({ isShow: false });
-  };
-
-  handleClickEvent = ({
-    name,
-    size,
-    latitude,
-    longitude,
-    callback,
-    ...rest
-  }) => {
-    if (callback) {
-      callback({ name, size, latitude, longitude, ...rest });
+  beforeClose = (done: () => mixed) => {
+    if (this.popper) {
+      this.popper.destroy();
+      this.popper = null;
     }
+
+    done();
+  };
+
+  openTooltip = () => {
+    this.setState({
+      isOpen: true,
+    });
+  };
+
+  closeTooltip = () => {
+    this.setState({
+      isOpen: false,
+    });
   };
 
   render() {
     const {
-      className,
-      iconClass,
-      name,
-      size,
+      target,
+      children,
       latitude,
       longitude,
-      icon,
-      onMarkerClick,
-      buildMarkerTooltip,
+      placement,
+      padded,
+      selected,
+      hideOnTouchDevices,
+      portalStyle,
+      portalClassName,
+      popperModifiers,
       ...rest
     } = this.props;
-    const classNames = [getClassName('bpk-map__marker')];
+    const classNames = [getClassName('bpk-map-marker')];
+    const renderPortal = !hasTouchSupport() || !hideOnTouchDevices;
 
-    if (className) {
-      classNames.push(className);
+    if (portalClassName) {
+      classNames.push(portalClassName);
     }
-
-    const RtlSupportedMarkerIcon = withRtlSupport(icon || BpkLargeLocationIcon);
 
     return (
       <OverlayView
         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
         position={{ lat: latitude, lng: longitude }}
       >
-        <div>
-          <button
+        {renderPortal ? (
+          <Portal
+            target={target}
+            targetRef={ref => {
+              this.targetRef = ref;
+              if (this.targetRef) {
+                this.targetRef.addEventListener('mouseenter', this.openTooltip);
+                this.targetRef.addEventListener(
+                  'mouseleave',
+                  this.closeTooltip,
+                );
+              }
+            }}
+            isOpen={this.state.isOpen}
+            onOpen={this.onOpen}
+            onClose={this.closeTooltip}
+            style={portalStyle}
             className={classNames.join(' ')}
-            onMouseEnter={this.handleMouseEnterEvent}
-            onMouseLeave={this.handleMouseLeaveEvent}
-            onClick={() =>
-              this.handleClickEvent({
-                name,
-                size,
-                latitude,
-                longitude,
-                callback: onMarkerClick,
-                ...rest,
-              })
-            }
-            {...rest}
           >
-            <RtlSupportedMarkerIcon className={iconClass} />
-          </button>
-          {this.state.isShow && this.state.tooltip}
-        </div>
+            <BpkTooltip padded={padded} {...rest}>
+              {children}
+            </BpkTooltip>
+          </Portal>
+        ) : (
+          target
+        )}
       </OverlayView>
     );
   }
 }
-
-BpkMapMarker.propTypes = {
-  className: PropTypes.string,
-  iconClass: PropTypes.string,
-  name: PropTypes.string,
-  size: PropTypes.string,
-  latitude: PropTypes.number.isRequired,
-  longitude: PropTypes.number.isRequired,
-  selected: PropTypes.bool,
-  icon: PropTypes.element,
-  buildMarkerTooltip: PropTypes.func,
-  onMarkerClick: PropTypes.func,
-};
-
-BpkMapMarker.defaultProps = {
-  className: null,
-  iconClass: null,
-  name: null,
-  size: 'regular',
-  selected: false,
-  icon: null,
-  buildMarkerTooltip: null,
-  onMarkerClick: null,
-};
 
 export default BpkMapMarker;
