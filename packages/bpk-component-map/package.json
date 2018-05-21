@@ -13,6 +13,7 @@
     "react": "^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@skyscanner/popper.js": "^1.12.9-beta.1",
     "bpk-component-icon": "^3.20.2",
     "bpk-component-spinner": "^2.2.29",
     "bpk-mixins": "^17.9.0",
