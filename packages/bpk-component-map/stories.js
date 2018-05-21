@@ -86,6 +86,7 @@ storiesOf('bpk-component-map', module)
       onDrag={drag}
     >
       <BpkMapMarker
+        id="bpkMapMarker1"
         latitude={55.943763}
         longitude={-3.195272}
         target={
@@ -119,6 +120,7 @@ storiesOf('bpk-component-map', module)
         Capital Airport International Hotel
       </BpkMapMarker>
       <BpkMapMarker
+        id="bpkMapMarker1"
         latitude={55.943763}
         longitude={-3.195272}
         target={
