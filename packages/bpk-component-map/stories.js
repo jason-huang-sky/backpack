@@ -54,8 +54,8 @@ storiesOf('bpk-component-map', module)
       centerLongitude={-3.1967116}
       zoomEnabled={false}
       dragEnabled={false}
-      width="600px"
-      height="600px"
+      width="10rem"
+      height="10rem"
       language="zh"
     />
   ))
@@ -130,7 +130,10 @@ storiesOf('bpk-component-map', module)
         }
         selected
       >
-        The Langham London
+        <div style={{ color: 'red' }}>
+          {' '}
+          <AlignedHotelIcon /> The Langham London*****
+        </div>
       </BpkMapMarker>
     </BpkMap>
   ));
