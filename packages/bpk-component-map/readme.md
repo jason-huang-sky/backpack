@@ -15,7 +15,7 @@ import React from 'react';
 import BpkMap from 'bpk-component-map';
 
 export default () => (
-  <BpkMap centerLatitude={55.944357} centerLongitude={-3.1967116} />
+  <BpkMap apiKey="YOUR-API-KEY" centerLatitude={55.944357} centerLongitude={-3.1967116} />
 )
 ```
 
@@ -27,6 +27,7 @@ import BpkMap from 'bpk-component-map';
 
 export default () => (
   <BpkMap  
+    apiKey="YOUR-API-KEY"
     zoom={15}
     centerLatitude={55.944357}
     centerLongitude={-3.1967116}
@@ -47,6 +48,7 @@ import BpkMap from 'bpk-component-map';
 
 export default () => (
   <BpkMap  
+    apiKey="YOUR-API-KEY"
     boundSouth={55.94129273544452}
     boundWest={-3.2285547854247625}
     boundNorth={55.952707392208396}
@@ -75,6 +77,7 @@ const drag = (bounds, center) => {
 
 export default () => (
   <BpkMap  
+    apiKey="YOUR-API-KEY"
     zoom={15}
     centerLatitude={55.944357}
     centerLongitude={-3.1967116}
@@ -87,6 +90,7 @@ export default () => (
 ## BpkMap Props
 | Property	      | PropType	| Required	| Default Value
 | ---------       | --------  | --------  | ------------- |
+| apiKey          | string    | false     | null          |
 | children        | element   | false     | null          |
 | className       | string    | false     | null          |
 | width           | string    | false     | 100%          |
@@ -110,7 +114,31 @@ Notes:
 the zoom, centerLatitude, centerLongitude is one method to load the map using the center point and zoom level
 the boundSouth,boundWest,boundNorth,boundEast is one method to load the map using bounding box 
 
+The apiKey is required if you want call the google api without limit, you should apply it from google.
+
 Language code list:
 https://www.w3schools.com/tags/ref_language_codes.asp
 region code list:
 https://www.w3schools.com/tags/ref_country_codes.asp
+
+
+
+
+## BpkMapMarker Props
+
+| Property        | PropType  | Required  | Default Value
+| ---------       | --------  | --------  | -------------   |
+| className       | string    | false     |                 |
+| iconClas        | string    | false     |                 |
+| latitude        | number    | true      |                 |
+| longtitude      | number    | true      |                 |
+| name            | string    | true      |                 |
+| type            | string    | true      |                 |
+| icon            | element   | true      |                 |
+| size            | enum      | false     | regular         |
+| selected        | bool      | false     | false           |
+| onMarkerClick   | func      | false     |                 |
+|buildMarkerTooltip| func     | false     |                 |
+
+
+size enum: small, regular,large

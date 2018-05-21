@@ -183,7 +183,7 @@ class BpkMapMarker extends Component<Props, State> {
             style={portalStyle}
             className={classNames.join(' ')}
           >
-            <BpkTooltip padded={padded} {...rest}>
+            <BpkTooltip id="" padded={padded} {...rest}>
               {children}
             </BpkTooltip>
           </Portal>

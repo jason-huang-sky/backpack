@@ -157,6 +157,7 @@ class BpkMap extends Component<Props> {
           options={{
             zoomControl: zoomEnabled,
             draggable: dragEnabled,
+            draggableCursor: onDrag ? 'hand' : 'default',
           }}
           onZoomChanged={() => this.handleZoomChanged(onZoom)}
           onDragEnd={() => this.handleDragEnd(onDrag)}

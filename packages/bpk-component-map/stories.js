@@ -19,8 +19,15 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { withButtonAlignment, withRtlSupport } from 'bpk-component-icon';
+import BpkLargeLocationIcon from 'bpk-component-icon/lg/location';
+import BpkHotelIcon from 'bpk-component-icon/sm/hotels';
+import { BpkMap, BpkMapMarker } from './index';
 
-import BpkMap from './index';
+const AlignedLocationIcon = withButtonAlignment(
+  withRtlSupport(BpkLargeLocationIcon),
+);
+const AlignedHotelIcon = withButtonAlignment(withRtlSupport(BpkHotelIcon));
 
 const zoom = level => {
   console.info(level);
@@ -69,4 +76,59 @@ storiesOf('bpk-component-map', module)
       boundEast={-3.159632742578083}
       onDrag={drag}
     />
+  ))
+  .add('Load Map with Marker', () => (
+    <BpkMap
+      boundSouth={55.94129273544452}
+      boundWest={-3.2285547854247625}
+      boundNorth={55.952707392208396}
+      boundEast={-3.159632742578083}
+      onDrag={drag}
+    >
+      <BpkMapMarker
+        latitude={55.943763}
+        longitude={-3.195272}
+        target={
+          <div>
+            <AlignedHotelIcon />
+          </div>
+        }
+      >
+        The Langham London
+      </BpkMapMarker>
+    </BpkMap>
+  ))
+  .add('Load Markers, one seleted', () => (
+    <BpkMap
+      boundSouth={55.94129273544452}
+      boundWest={-3.2285547854247625}
+      boundNorth={55.952707392208396}
+      boundEast={-3.159632742578083}
+      onDrag={drag}
+    >
+      <BpkMapMarker
+        id="controlForm"
+        latitude={55.944357}
+        longitude={-3.1967116}
+        target={
+          <div>
+            <AlignedLocationIcon />
+          </div>
+        }
+      >
+        Capital Airport International Hotel
+      </BpkMapMarker>
+      <BpkMapMarker
+        latitude={55.943763}
+        longitude={-3.195272}
+        target={
+          <div>
+            <AlignedHotelIcon />
+          </div>
+        }
+        selected
+      >
+        The Langham London
+      </BpkMapMarker>
+    </BpkMap>
   ));
